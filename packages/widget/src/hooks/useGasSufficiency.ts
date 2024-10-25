@@ -1,8 +1,8 @@
 import type { EVMChain, RouteExtended, Token } from '@lifi/sdk'
 import { useAccount } from '@lifi/wallet-management'
 import { useQuery } from '@tanstack/react-query'
-import type { Connector } from 'wagmi'
 import { useAvailableChains } from './useAvailableChains.js'
+import { useIsContractAddress } from './useIsContractAddress.js'
 import { getTokenBalancesWithRetry } from './useTokenBalance.js'
 
 export interface GasSufficiency {
@@ -22,12 +22,19 @@ export const useGasSufficiency = (route?: RouteExtended) => {
     chainType: getChainById(route?.fromChainId)?.chainType,
   })
 
+  const isContractAddress = useIsContractAddress(
+    account.address,
+    route?.fromChainId,
+    account.chainType
+  )
+
   const { data: insufficientGas, isLoading } = useQuery({
     queryKey: ['gas-sufficiency-check', account.address, route?.id],
     queryFn: async ({ queryKey: [, accountAddress] }) => {
       if (!route) {
         return
       }
+
       // We assume that LI.Fuel protocol always refuels the destination chain
       const hasRefuelStep = route.steps
         .flatMap((step) => step.includedSteps)
@@ -40,11 +47,7 @@ export const useGasSufficiency = (route?: RouteExtended) => {
             // We need to avoid destination chain step sufficiency check if we have LI.Fuel protocol sub-step
             const skipDueToRefuel =
               step.action.fromChainId === route.toChainId && hasRefuelStep
-            if (
-              step.estimate.gasCosts &&
-              (account.connector as Connector)?.id !== 'safe' &&
-              !skipDueToRefuel
-            ) {
+            if (step.estimate.gasCosts && !skipDueToRefuel) {
               const { token } = step.estimate.gasCosts[0]
               const gasCostAmount = step.estimate.gasCosts.reduce(
                 (amount, gasCost) =>
@@ -96,7 +99,7 @@ export const useGasSufficiency = (route?: RouteExtended) => {
       )
 
       if (!tokenBalances?.length) {
-        return []
+        return
       }
       ;[route.fromChainId, route.toChainId].forEach((chainId) => {
         if (gasCosts[chainId]) {
@@ -133,7 +136,7 @@ export const useGasSufficiency = (route?: RouteExtended) => {
       return gasCostResult
     },
 
-    enabled: Boolean(account.address && route),
+    enabled: Boolean(!isContractAddress && account.address && route),
     refetchInterval,
     staleTime: refetchInterval,
   })

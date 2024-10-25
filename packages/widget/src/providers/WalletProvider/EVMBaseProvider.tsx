@@ -7,10 +7,10 @@ import { type FC, type PropsWithChildren, useRef } from 'react'
 import { WagmiProvider } from 'wagmi'
 import { defaultCoinbaseConfig } from '../../config/coinbase.js'
 import { defaultMetaMaskConfig } from '../../config/metaMask.js'
+import { defaultSafeConfig } from '../../config/safe.js'
 import { defaultWalletConnectConfig } from '../../config/walletConnect.js'
 import { useAvailableChains } from '../../hooks/useAvailableChains.js'
 import { useWidgetConfig } from '../WidgetProvider/WidgetProvider.js'
-import { defaultSafeConfig } from '../../config/safe.js'
 
 export const EVMBaseProvider: FC<PropsWithChildren> = ({ children }) => {
   const { walletConfig } = useWidgetConfig()

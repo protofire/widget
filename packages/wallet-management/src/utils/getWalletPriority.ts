@@ -6,7 +6,6 @@ const walletPriority: Record<string, number> = {
   'io.metamask.mobile': 3,
   coinbaseWalletSDK: 4,
   'com.coinbase.wallet': 4,
-
 }
 
 export const getWalletPriority = (id: string) => {

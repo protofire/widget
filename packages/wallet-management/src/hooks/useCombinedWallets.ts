@@ -10,8 +10,8 @@ import type { Connector } from 'wagmi'
 import { useAccount, useConnect } from 'wagmi'
 import { defaultCoinbaseConfig } from '../config/coinbase.js'
 import { defaultMetaMaskConfig } from '../config/metaMask.js'
-import { defaultWalletConnectConfig } from '../config/walletConnect.js'
 import { defaultSafeConfig } from '../config/safe.js'
+import { defaultWalletConnectConfig } from '../config/walletConnect.js'
 import { createCoinbaseConnector } from '../connectors/coinbase.js'
 import { createMetaMaskConnector } from '../connectors/metaMask.js'
 import { createSafeConnector } from '../connectors/safe.js'
@@ -119,9 +119,7 @@ export const useCombinedWallets = () => {
       )
     ) {
       evmConnectors.unshift(
-        createSafeConnector(
-          walletConfig?.safe ?? defaultSafeConfig
-        )
+        createSafeConnector(walletConfig?.safe ?? defaultSafeConfig)
       )
     }
     if (
@@ -138,8 +136,7 @@ export const useCombinedWallets = () => {
     if (
       !evmConnectors.some((connector) =>
         connector.id.toLowerCase().includes('coinbase')
-      ) &&
-      !isWalletInstalled('coinbase')
+      )
     ) {
       evmConnectors.unshift(
         createCoinbaseConnector(walletConfig?.coinbase ?? defaultCoinbaseConfig)
@@ -148,8 +145,7 @@ export const useCombinedWallets = () => {
     if (
       !evmConnectors.some((connector) =>
         connector.id.toLowerCase().includes('metamask')
-      ) &&
-      !isWalletInstalled('metaMask')
+      )
     ) {
       evmConnectors.unshift(
         createMetaMaskConnector(walletConfig?.metaMask ?? defaultMetaMaskConfig)

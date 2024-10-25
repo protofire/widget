@@ -1,5 +1,5 @@
 import { http, createClient } from 'viem'
-import { arbitrum, optimism, base, bsc, linea, blast } from 'viem/chains'
+import { arbitrum, base, blast, bsc, linea, optimism } from 'viem/chains'
 import type { Config, CreateConnectorFn } from 'wagmi'
 import { createConfig } from 'wagmi'
 import type {
@@ -8,10 +8,11 @@ import type {
   SafeParameters,
   WalletConnectParameters,
 } from 'wagmi/connectors'
+import { safe } from 'wagmi/connectors'
 import { createCoinbaseConnector } from './connectors/coinbase.js'
 import { createMetaMaskConnector } from './connectors/metaMask.js'
-import { createWalletConnectConnector } from './connectors/walletConnect.js'
 import { createSafeConnector } from './connectors/safe.js'
+import { createWalletConnectConnector } from './connectors/walletConnect.js'
 import { isWalletInstalled } from './utils/isWalletInstalled.js'
 
 export interface DefaultWagmiConfigProps {
@@ -61,16 +62,27 @@ export function createDefaultWagmiConfig(
 ): DefaultWagmiConfigResult {
   const connectors: CreateConnectorFn[] = [...(props?.connectors ?? [])]
 
+  const anyWindow = typeof window !== 'undefined' ? (window as any) : undefined
+  const localStorage = anyWindow?.localStorage
+  // in Multisig env, window.parent is not equal to window
+  const isIframeEnvironment = anyWindow && anyWindow.parent !== anyWindow
+
+  const multiInjectedProviderDiscovery = isIframeEnvironment
+    ? false
+    : (props?.wagmiConfig?.multiInjectedProviderDiscovery ?? true)
+
   const config = createConfig({
     chains: [arbitrum, optimism, base, bsc, linea, blast],
     client({ chain }) {
       return createClient({ chain, transport: http() })
     },
     ...props?.wagmiConfig,
+    multiInjectedProviderDiscovery,
   })
 
-  const localStorage =
-    typeof window !== 'undefined' ? window.localStorage : undefined
+  if (isIframeEnvironment) {
+    connectors.unshift(safe())
+  }
 
   if (props?.safe && !isWalletInstalled('safe')) {
     const recentConnectorId = localStorage?.getItem(
@@ -94,7 +106,7 @@ export function createDefaultWagmiConfig(
     }
   }
 
-  if (!props?.lazy && props?.coinbase && !isWalletInstalled('coinbase')) {
+  if (props?.coinbase && !isWalletInstalled('coinbase')) {
     const recentConnectorId = localStorage?.getItem(
       `${config.storage?.key}.recentConnectorId`
     )

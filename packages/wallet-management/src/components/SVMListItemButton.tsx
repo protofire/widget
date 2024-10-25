@@ -29,7 +29,7 @@ export const SVMListItemButton = ({
     ? 'Solana'
     : walletAdapter.name
 
-  const connect = async () => {
+  const connectWallet = async () => {
     try {
       onConnecting?.()
       if (connected) {
@@ -37,7 +37,7 @@ export const SVMListItemButton = ({
       }
       select(walletAdapter.name)
       // We use autoConnect on wallet selection
-      // await solanaConnect();
+      // await connect()
       walletAdapter.once('connect', (publicKey) => {
         setLastConnectedAccount(walletAdapter)
         emitter.emit(WalletManagementEvent.WalletConnected, {
@@ -55,7 +55,7 @@ export const SVMListItemButton = ({
   }
 
   return (
-    <ListItemButton key={connectorDisplayName} onClick={connect}>
+    <ListItemButton key={connectorDisplayName} onClick={connectWallet}>
       <ListItemAvatar>
         <Avatar
           src={
