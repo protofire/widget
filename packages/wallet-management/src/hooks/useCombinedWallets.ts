@@ -11,8 +11,10 @@ import { useAccount, useConnect } from 'wagmi'
 import { defaultCoinbaseConfig } from '../config/coinbase.js'
 import { defaultMetaMaskConfig } from '../config/metaMask.js'
 import { defaultWalletConnectConfig } from '../config/walletConnect.js'
+import { defaultSafeConfig } from '../config/safe.js'
 import { createCoinbaseConnector } from '../connectors/coinbase.js'
 import { createMetaMaskConnector } from '../connectors/metaMask.js'
+import { createSafeConnector } from '../connectors/safe.js'
 import type { CreateConnectorFnExtended } from '../connectors/types.js'
 import { createWalletConnectConnector } from '../connectors/walletConnect.js'
 import { useWalletManagementConfig } from '../providers/WalletManagementProvider/WalletManagementContext.js'
@@ -113,6 +115,17 @@ export const useCombinedWallets = () => {
     // Ensure standard connectors are included
     if (
       !evmConnectors.some((connector) =>
+        connector.id.toLowerCase().includes('safe')
+      )
+    ) {
+      evmConnectors.unshift(
+        createSafeConnector(
+          walletConfig?.safe ?? defaultSafeConfig
+        )
+      )
+    }
+    if (
+      !evmConnectors.some((connector) =>
         connector.id.toLowerCase().includes('walletconnect')
       )
     ) {
@@ -152,7 +165,7 @@ export const useCombinedWallets = () => {
     const installedEVMConnectors = evmConnectors.filter((connector) => {
       const isInstalled = isWalletInstalled(connector.id)
       const isConnected = wagmiAccount.connector?.id === connector.id
-      return isInstalled && !isConnected && connector.id !== 'safe'
+      return isInstalled && !isConnected
     })
 
     const installedSVMWallets = solanaWallets.filter((wallet) => {

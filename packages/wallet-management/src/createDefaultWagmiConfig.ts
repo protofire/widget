@@ -1,21 +1,24 @@
 import { http, createClient } from 'viem'
-import { mainnet } from 'viem/chains'
+import { arbitrum, optimism, base, bsc, linea, blast } from 'viem/chains'
 import type { Config, CreateConnectorFn } from 'wagmi'
 import { createConfig } from 'wagmi'
 import type {
   CoinbaseWalletParameters,
   MetaMaskParameters,
+  SafeParameters,
   WalletConnectParameters,
 } from 'wagmi/connectors'
 import { createCoinbaseConnector } from './connectors/coinbase.js'
 import { createMetaMaskConnector } from './connectors/metaMask.js'
 import { createWalletConnectConnector } from './connectors/walletConnect.js'
+import { createSafeConnector } from './connectors/safe.js'
 import { isWalletInstalled } from './utils/isWalletInstalled.js'
 
 export interface DefaultWagmiConfigProps {
   walletConnect?: WalletConnectParameters
   coinbase?: CoinbaseWalletParameters
   metaMask?: MetaMaskParameters
+  safe?: SafeParameters
   wagmiConfig?: {
     ssr?: boolean
     multiInjectedProviderDiscovery?: boolean
@@ -59,7 +62,7 @@ export function createDefaultWagmiConfig(
   const connectors: CreateConnectorFn[] = [...(props?.connectors ?? [])]
 
   const config = createConfig({
-    chains: [mainnet],
+    chains: [arbitrum, optimism, base, bsc, linea, blast],
     client({ chain }) {
       return createClient({ chain, transport: http() })
     },
@@ -68,6 +71,15 @@ export function createDefaultWagmiConfig(
 
   const localStorage =
     typeof window !== 'undefined' ? window.localStorage : undefined
+
+  if (props?.safe && !isWalletInstalled('safe')) {
+    const recentConnectorId = localStorage?.getItem(
+      `${config.storage?.key}.recentConnectorId`
+    )
+    if (recentConnectorId?.includes?.('safe') || !props.lazy) {
+      connectors.unshift(createSafeConnector(props.safe))
+    }
+  }
 
   // Check if WalletConnect properties exist in the props
   if (props?.walletConnect) {
@@ -97,6 +109,15 @@ export function createDefaultWagmiConfig(
     )
     if (recentConnectorId?.includes?.('metaMaskSDK') || !props.lazy) {
       connectors.unshift(createMetaMaskConnector(props.metaMask))
+    }
+  }
+
+  if (props?.safe) {
+    const recentConnectorId = localStorage?.getItem(
+      `${config.storage?.key}.recentConnectorId`
+    )
+    if (recentConnectorId?.includes?.('safe') || !props.lazy) {
+      connectors.unshift(createSafeConnector(props.safe))
     }
   }
 

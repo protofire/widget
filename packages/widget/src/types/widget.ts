@@ -27,6 +27,7 @@ import type {
 import type {
   CoinbaseWalletParameters,
   MetaMaskParameters,
+  SafeParameters,
   WalletConnectParameters,
 } from 'wagmi/connectors'
 import type {
@@ -108,6 +109,7 @@ export interface WidgetWalletConfig {
   walletConnect?: WalletConnectParameters
   coinbase?: CoinbaseWalletParameters
   metaMask?: MetaMaskParameters
+  safe?: SafeParameters
 }
 
 export interface WidgetSDKConfig

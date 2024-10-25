@@ -10,6 +10,7 @@ import { defaultMetaMaskConfig } from '../../config/metaMask.js'
 import { defaultWalletConnectConfig } from '../../config/walletConnect.js'
 import { useAvailableChains } from '../../hooks/useAvailableChains.js'
 import { useWidgetConfig } from '../WidgetProvider/WidgetProvider.js'
+import { defaultSafeConfig } from '../../config/safe.js'
 
 export const EVMBaseProvider: FC<PropsWithChildren> = ({ children }) => {
   const { walletConfig } = useWidgetConfig()
@@ -21,6 +22,7 @@ export const EVMBaseProvider: FC<PropsWithChildren> = ({ children }) => {
       coinbase: walletConfig?.coinbase ?? defaultCoinbaseConfig,
       metaMask: walletConfig?.metaMask ?? defaultMetaMaskConfig,
       walletConnect: walletConfig?.walletConnect ?? defaultWalletConnectConfig,
+      safe: walletConfig?.safe ?? defaultSafeConfig,
       wagmiConfig: {
         ssr: true,
       },

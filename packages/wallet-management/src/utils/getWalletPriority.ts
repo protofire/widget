@@ -1,11 +1,12 @@
 const walletPriority: Record<string, number> = {
-  metaMaskSDK: 1,
-  'io.metamask': 1,
-  'io.metamask.mobile': 1,
-  coinbaseWalletSDK: 2,
-  'com.coinbase.wallet': 2,
-  walletConnect: 3,
-  safe: 4,
+  safe: 1,
+  walletConnect: 2,
+  metaMaskSDK: 3,
+  'io.metamask': 3,
+  'io.metamask.mobile': 3,
+  coinbaseWalletSDK: 4,
+  'com.coinbase.wallet': 4,
+
 }
 
 export const getWalletPriority = (id: string) => {
