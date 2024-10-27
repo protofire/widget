@@ -49,6 +49,7 @@ function reducer(state: State, action: Action): State {
     case 'SHOW_CONNECTING':
       return { view: 'connecting', selectedWalletId: action.id }
     case 'HANDLE_ERROR':
+      console.log({error: action.error?.message})
       if (action.error?.message?.includes('pending')) {
         return { view: 'connecting', selectedWalletId: action.id }
       }
@@ -80,6 +81,7 @@ export const WalletMenuContent: React.FC<WalletMenuContentProps> = ({
   }
 
   const handleError = (id: string, error: any) => {
+    console.log({error})
     dispatch({ type: 'HANDLE_ERROR', id, error })
   }
 
