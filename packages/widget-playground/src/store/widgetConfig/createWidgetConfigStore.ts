@@ -271,7 +271,7 @@ export const createWidgetConfigStore = (
               if (state.config?.walletConfig) {
                 const walletConfig = state.defaultConfig?.walletConfig
                   ? state.defaultConfig?.walletConfig
-                  : { async onConnect() {} }
+                  : { ...state.config?.walletConfig, onConnect: () => {} }
                 state.setWalletConfig(walletConfig)
               }
 

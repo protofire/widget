@@ -38,11 +38,16 @@ export const widgetBaseConfig: WidgetConfig = {
   // disabledUI: ['toAddress', 'fromAmount', 'toToken', 'fromToken'],
   // requiredUI: ['toAddress'],
   // slippage: 0.003,
+  // walletConfig: {
+  //   usePartialWalletManagement: true,
+  // },
   sdkConfig: {
     apiUrl: 'https://li.quest/v1',
     rpcUrls: {
       [ChainId.SOL]: [
         'https://chaotic-restless-putty.solana-mainnet.quiknode.pro/',
+        'https://dacey-pp61jd-fast-mainnet.helius-rpc.com/',
+        'https://lifi-mainc49-4c2b.mainnet.rpcpool.com/',
       ],
     },
     routeOptions: {
