@@ -37,7 +37,7 @@ export const SelectTokenPage: FC<FormTypeProps> = ({ formType }) => {
 
   useHeader(title)
 
-  const hideChainSelect = swapOnly && formType === 'to'
+  const hideChainSelect = formType === 'from' || (swapOnly && formType === 'to')
 
   return (
     <FullPageContainer disableGutters>

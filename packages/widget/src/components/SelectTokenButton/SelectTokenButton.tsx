@@ -48,11 +48,13 @@ export const SelectTokenButton: React.FC<
   const isSelected = !!(chain && token)
   const onClick = !disabledUI?.includes(tokenKey) ? handleClick : undefined
   const defaultPlaceholder =
-    formType === 'to' && subvariant === 'refuel'
-      ? t('main.selectChain')
-      : formType === 'to' && swapOnly
-        ? t('main.selectToken')
-        : t('main.selectChainAndToken')
+    formType === 'from'
+      ? t('main.selectToken')
+      : formType === 'to' && subvariant === 'refuel'
+        ? t('main.selectChain')
+        : formType === 'to' && swapOnly
+          ? t('main.selectToken')
+          : t('main.selectChainAndToken')
   const cardTitle: string =
     formType === 'from' && subvariant === 'custom'
       ? t('header.payWith')
